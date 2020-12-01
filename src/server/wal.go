@@ -2,7 +2,6 @@ package server
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -49,7 +48,6 @@ func (w *wal) Read() (*KVData, int) {
 		}
 		d.key = uint8(v)
 		d.value = l[1]
-		fmt.Printf("Read() getting %v\n", l[2])
 		d.ts.UnmarshalText([]byte(l[2]))
 		status = 1
 	}

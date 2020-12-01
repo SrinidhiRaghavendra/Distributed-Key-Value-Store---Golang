@@ -23,9 +23,17 @@ type NodeInfo struct {
 
 func (n KVData) String() string {
 	t, err := n.ts.MarshalText()
-	fmt.Printf("in String() %v\n", t)
 	if err != nil {
 		log.Fatal("KVData timestamp conversion failed")
 	}
 	return fmt.Sprintf("%v,%v,%v\n", n.key, n.value, string(t))
+}
+
+type ksio interface {
+	put(*KVData)
+	get() *KVData
+}
+
+type ksmodule interface {
+	Init()
 }
