@@ -1,2 +1,5 @@
 export GOPATH=`pwd`
+
 #thrift -gen go
+ln -s thrift-0.13.0 thrift
+thrift -gen go:thrift_import=thrift/lib/go/thrift -o src/ kvs.thrift

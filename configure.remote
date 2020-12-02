@@ -1,0 +1,10 @@
+#!/bin/bash
+export GOPATH=`pwd`
+export PATH=$PATH:/home/cs557-inst/local/bin
+export LD_LIBRARY_PATH=/home/cs557-inst/local/lib/
+
+ln -s src/thrift-0.13.0 src/thrift
+
+/bin/bash
+# uncomment for thrift generation
+#thrift -gen go:thrift_import=thrift/lib/go/thrift -o src/ kvs.thrift
