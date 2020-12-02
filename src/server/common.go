@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"log"
-	"net"
 	"time"
 )
 
@@ -17,8 +16,8 @@ type NodeID int
 
 type NodeInfo struct {
 	nodeid NodeID
-	ipaddr net.IP
-	port   int
+	ipaddr string
+	port   string
 }
 
 func (n KVData) String() string {
