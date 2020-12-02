@@ -1,6 +1,7 @@
 package server
 
 import (
+	"gen-go/kvs"
 	"testing"
 	"time"
 )
@@ -8,14 +9,14 @@ import (
 func TestMemstore(t *testing.T) {
 	var st memstore
 	st.Init()
-	st.put(&KVData{3, "qwe", time.Now()})
+	st.put(&kvs.KVData{Key: 3, Value: "qwe", Timestamp: time.Now().String()})
 	d, ok := st.get(3)
-	if !ok || d.value != "qwe" {
-		t.Fatalf("bad value in memstore key=%v value=%v", 3, d.value)
+	if !ok || d.Value != "qwe" {
+		t.Fatalf("bad Value in memstore key=%v Value=%v", 3, d.Value)
 	}
 
 	d, ok = st.get(4)
 	if ok {
-		t.Fatal("bad value in memstore 2")
+		t.Fatal("bad Value in memstore 2")
 	}
 }

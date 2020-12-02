@@ -2,15 +2,8 @@ package server
 
 import (
 	"fmt"
-	"log"
-	"time"
+	"gen-go/kvs"
 )
-
-type KVData struct {
-	key   uint8
-	value string
-	ts    time.Time
-}
 
 type NodeID int
 
@@ -20,17 +13,13 @@ type NodeInfo struct {
 	port   string
 }
 
-func (n KVData) String() string {
-	t, err := n.ts.MarshalText()
-	if err != nil {
-		log.Fatal("KVData timestamp conversion failed")
-	}
-	return fmt.Sprintf("%v,%v,%v\n", n.key, n.value, string(t))
+func MarshalKVData(n kvs.KVData) string {
+	return fmt.Sprintf("%v,%v,%v\n", n.Key, n.Value, n.Timestamp)
 }
 
 type ksio interface {
-	put(*KVData)
-	get() *KVData
+	put(*kvs.KVData)
+	get() *kvs.KVData
 }
 
 type ksmodule interface {

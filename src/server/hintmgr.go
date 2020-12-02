@@ -1,11 +1,13 @@
 package server
 
-var hints [4][]KVData
+import "gen-go/kvs"
 
-func StoreHint(id NodeID, hint KVData) {
+var hints [4][]kvs.KVData
+
+func StoreHint(id NodeID, hint kvs.KVData) {
 	hints[id] = append(hints[id], hint)
 }
 
-func GetHintsForNode(id NodeID) []KVData {
+func GetHintsForNode(id NodeID) []kvs.KVData {
 	return hints[id]
 }

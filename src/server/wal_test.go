@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"gen-go/kvs"
 	"testing"
 	"time"
 )
@@ -10,22 +11,22 @@ func TestWal(t *testing.T) {
 	var w wal
 	defer w.Close()
 	w.Init()
-	d := KVData{key: 1, value: "one", ts: time.Now()}
+	d := kvs.KVData{Key: 1, Value: "one", Timestamp: time.Now().String()}
 	w.Put(d)
-	d = KVData{key: 2, value: "two", ts: time.Now()}
+	d = kvs.KVData{Key: 2, Value: "two", Timestamp: time.Now().String()}
 	w.Put(d)
-	d = KVData{key: 3, value: "three", ts: time.Now()}
+	d = kvs.KVData{Key: 3, Value: "three", Timestamp: time.Now().String()}
 	w.Put(d)
 
 	w.Begin()
 	var ret int
-	var dp *KVData
+	var dp *kvs.KVData
 	for {
 		dp, ret = w.Read()
 		if ret == 0 {
 			break
 		}
 		_ = dp
-		fmt.Printf("read: %v %v %v\n", dp.key, dp.value, dp.ts)
+		fmt.Printf("read: %v %v %v\n", dp.Key, dp.Value, dp.Timestamp)
 	}
 }

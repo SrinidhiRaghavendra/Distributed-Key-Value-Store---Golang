@@ -2,6 +2,7 @@ package server
 
 import (
 	"bufio"
+	"gen-go/kvs"
 	"log"
 	"os"
 	"strconv"
@@ -36,8 +37,8 @@ func (w *wal) Begin() {
 	w.scan.Split(bufio.ScanLines)
 }
 
-func (w *wal) Read() (*KVData, int) {
-	var d KVData
+func (w *wal) Read() (*kvs.KVData, int) {
+	var d kvs.KVData
 	var l []string
 	status := 0
 	if w.scan.Scan() {
@@ -46,16 +47,16 @@ func (w *wal) Read() (*KVData, int) {
 		if err != nil {
 			log.Fatal("Error reading from WAL")
 		}
-		d.key = uint8(v)
-		d.value = l[1]
-		d.ts.UnmarshalText([]byte(l[2]))
+		d.Key = int32(v)
+		d.Value = l[1]
+		d.Timestamp = l[2]
 		status = 1
 	}
 
 	return &d, status
 }
 
-func (w *wal) Put(d KVData) {
+func (w *wal) Put(d kvs.KVData) {
 	str := d.String()
 	n, err := w.f.WriteString(str)
 	if err != nil {
