@@ -1,4 +1,4 @@
 export GOPATH=`pwd`
+thrift -gen go:thrift_import=thrift/lib/go/thrift -o src/ kvs.thrift
 zsh
 #thrift -gen go
-thrift -gen go:thrift_import=thrift/lib/go/thrift -o src/ kvs.thrift

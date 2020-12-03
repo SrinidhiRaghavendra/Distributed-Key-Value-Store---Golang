@@ -9,7 +9,7 @@ struct KVData {
 }
 
 struct Node {
-  1: string id;
+  1: i32 id;
   2: string ip;
   3: i32 port;
 }

@@ -1,13 +1,17 @@
 package server
 
-import "gen-go/kvs"
+import (
+	"context"
+	"gen-go/kvs"
+)
 
 func recover(w *wal) {
 	nodes := GetEveryone()
 	for i, v := range nodes {
 		if i != int(me) {
 			com := NewIntraNodeComm(&v)
-			com.GetHints(&kvs.Node{})
+			var ctx context.Context
+			com.GetHints(ctx, &kvs.Node{})
 		}
 	}
 }

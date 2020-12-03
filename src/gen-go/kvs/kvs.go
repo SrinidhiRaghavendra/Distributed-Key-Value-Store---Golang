@@ -345,7 +345,7 @@ func (p *KVData) String() string {
 //  - IP
 //  - Port
 type Node struct {
-  ID string `thrift:"id,1" db:"id" json:"id"`
+  ID int32 `thrift:"id,1" db:"id" json:"id"`
   IP string `thrift:"ip,2" db:"ip" json:"ip"`
   Port int32 `thrift:"port,3" db:"port" json:"port"`
 }
@@ -355,7 +355,7 @@ func NewNode() *Node {
 }
 
 
-func (p *Node) GetID() string {
+func (p *Node) GetID() int32 {
   return p.ID
 }
 
@@ -380,7 +380,7 @@ func (p *Node) Read(iprot thrift.TProtocol) error {
     if fieldTypeId == thrift.STOP { break; }
     switch fieldId {
     case 1:
-      if fieldTypeId == thrift.STRING {
+      if fieldTypeId == thrift.I32 {
         if err := p.ReadField1(iprot); err != nil {
           return err
         }
@@ -425,7 +425,7 @@ func (p *Node) Read(iprot thrift.TProtocol) error {
 }
 
 func (p *Node)  ReadField1(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadString(); err != nil {
+  if v, err := iprot.ReadI32(); err != nil {
   return thrift.PrependError("error reading field 1: ", err)
 } else {
   p.ID = v
@@ -467,9 +467,9 @@ func (p *Node) Write(oprot thrift.TProtocol) error {
 }
 
 func (p *Node) writeField1(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("id", thrift.STRING, 1); err != nil {
+  if err := oprot.WriteFieldBegin("id", thrift.I32, 1); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:id: ", p), err) }
-  if err := oprot.WriteString(string(p.ID)); err != nil {
+  if err := oprot.WriteI32(int32(p.ID)); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.id (1) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 1:id: ", p), err) }

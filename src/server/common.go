@@ -5,14 +5,15 @@ import (
 	"gen-go/kvs"
 )
 
-type NodeID int
+//type string int
 
-type NodeInfo struct {
-	nodeid NodeID
-	ipaddr string
-	port   string
-}
+//type kvs.Node struct {
+//	ID string
+//	IP string
+//	Port   string
+//}
 
+// omit warn
 func MarshalKVData(n kvs.KVData) string {
 	return fmt.Sprintf("%v,%v,%v\n", n.Key, n.Value, n.Timestamp)
 }
