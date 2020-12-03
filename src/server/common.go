@@ -27,5 +27,9 @@ func UnMarshalKVData(d string) *kvs.KVData {
 	if err != nil {
 		log.Fatal("Error reading from WAL")
 	}
-	return &kvs.KVData{Key: int32(v), Value: l[1], Timestamp: l[2]}
+	ts, err := strconv.ParseInt(l[2], 10, 64)
+	if err != nil {
+		log.Fatal("Error parsing timestamp")
+	}
+	return &kvs.KVData{Key: int32(v), Value: l[1], Timestamp: ts}
 }

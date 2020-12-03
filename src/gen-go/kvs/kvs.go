@@ -183,7 +183,7 @@ func (p *SystemException) Error() string {
 //  - Key
 type KVData struct {
   Value string `thrift:"value,1" db:"value" json:"value"`
-  Timestamp string `thrift:"timestamp,2" db:"timestamp" json:"timestamp"`
+  Timestamp int64 `thrift:"timestamp,2" db:"timestamp" json:"timestamp"`
   Key int32 `thrift:"key,3" db:"key" json:"key"`
 }
 
@@ -196,7 +196,7 @@ func (p *KVData) GetValue() string {
   return p.Value
 }
 
-func (p *KVData) GetTimestamp() string {
+func (p *KVData) GetTimestamp() int64 {
   return p.Timestamp
 }
 
@@ -227,7 +227,7 @@ func (p *KVData) Read(iprot thrift.TProtocol) error {
         }
       }
     case 2:
-      if fieldTypeId == thrift.STRING {
+      if fieldTypeId == thrift.I64 {
         if err := p.ReadField2(iprot); err != nil {
           return err
         }
@@ -271,7 +271,7 @@ func (p *KVData)  ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *KVData)  ReadField2(iprot thrift.TProtocol) error {
-  if v, err := iprot.ReadString(); err != nil {
+  if v, err := iprot.ReadI64(); err != nil {
   return thrift.PrependError("error reading field 2: ", err)
 } else {
   p.Timestamp = v
@@ -314,9 +314,9 @@ func (p *KVData) writeField1(oprot thrift.TProtocol) (err error) {
 }
 
 func (p *KVData) writeField2(oprot thrift.TProtocol) (err error) {
-  if err := oprot.WriteFieldBegin("timestamp", thrift.STRING, 2); err != nil {
+  if err := oprot.WriteFieldBegin("timestamp", thrift.I64, 2); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:timestamp: ", p), err) }
-  if err := oprot.WriteString(string(p.Timestamp)); err != nil {
+  if err := oprot.WriteI64(int64(p.Timestamp)); err != nil {
   return thrift.PrependError(fmt.Sprintf("%T.timestamp (2) field write error: ", p), err) }
   if err := oprot.WriteFieldEnd(); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write field end error 2:timestamp: ", p), err) }

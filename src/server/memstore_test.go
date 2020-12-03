@@ -8,7 +8,7 @@ import (
 
 func TestMemstore(t *testing.T) {
 	MemstoreInit()
-	MemstorePut(&kvs.KVData{Key: 3, Value: "qwe", Timestamp: time.Now().String()})
+	MemstorePut(&kvs.KVData{Key: 3, Value: "qwe", Timestamp: time.Now().Unix()})
 	d, ok := MemstoreGet(3)
 	if !ok || d.Value != "qwe" {
 		t.Fatalf("bad Value in memstore key=%v Value=%v", 3, d.Value)
@@ -25,8 +25,8 @@ func TestMemstore2(t *testing.T) {
 	t1 := time.Now()
 	time.Sleep(4 * time.Second)
 	t2 := time.Now()
-	MemstorePut(&kvs.KVData{Key: 3, Value: "qwe", Timestamp: t2.Format(time.UnixDate)})
-	MemstorePut(&kvs.KVData{Key: 3, Value: "asd", Timestamp: t1.Format(time.UnixDate)})
+	MemstorePut(&kvs.KVData{Key: 3, Value: "qwe", Timestamp: t2.Unix()})
+	MemstorePut(&kvs.KVData{Key: 3, Value: "asd", Timestamp: t1.Unix()})
 
 	d, ok := MemstoreGet(3)
 	if !ok || d.Value != "qwe" {
@@ -35,7 +35,7 @@ func TestMemstore2(t *testing.T) {
 
 	time.Sleep(3 * time.Second)
 	t2 = time.Now()
-	MemstorePut(&kvs.KVData{Key: 3, Value: "asd", Timestamp: t2.Format(time.UnixDate)})
+	MemstorePut(&kvs.KVData{Key: 3, Value: "asd", Timestamp: t2.Unix()})
 	d, ok = MemstoreGet(3)
 	if !ok || d.Value != "asd" {
 		t.Fatalf("bad Value in memstore key=%v Value=%v", 3, d.Value)
