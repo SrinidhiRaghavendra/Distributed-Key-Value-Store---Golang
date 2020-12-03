@@ -5,7 +5,7 @@ import (
 )
 
 var nodes [4]kvs.Node
-var me uint8
+var me int32
 
 // TODO init me
 
@@ -23,7 +23,7 @@ func GetEveryone() []kvs.Node {
 	return nodes[:]
 }
 
-func InitNodeInfo(m uint8) {
+func InitNodeInfo(m int32) {
 	nodes[0] = kvs.Node{ID: 0, IP: "127.0.0.1", Port: 8080}
 	nodes[1] = kvs.Node{ID: 1, IP: "127.0.0.1", Port: 8081}
 	nodes[2] = kvs.Node{ID: 2, IP: "127.0.0.1", Port: 8082}
