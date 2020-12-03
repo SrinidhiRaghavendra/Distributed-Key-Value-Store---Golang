@@ -8,21 +8,21 @@ import (
 )
 
 func TestWal(t *testing.T) {
-	var w wal
-	defer w.Close()
-	w.Init()
-	d := kvs.KVData{Key: 1, Value: "one", Timestamp: time.Now().String()}
-	w.Put(d)
-	d = kvs.KVData{Key: 2, Value: "two", Timestamp: time.Now().String()}
-	w.Put(d)
-	d = kvs.KVData{Key: 3, Value: "three", Timestamp: time.Now().String()}
-	w.Put(d)
+	WalInit()
+	defer WalClose()
+	WalInit()
+	d := kvs.KVData{Key: 1, Value: "one", Timestamp: time.Now().Format(time.UnixDate)}
+	WalPut(d)
+	d = kvs.KVData{Key: 2, Value: "two", Timestamp: time.Now().Format(time.UnixDate)}
+	WalPut(d)
+	d = kvs.KVData{Key: 3, Value: "three", Timestamp: time.Now().Format(time.UnixDate)}
+	WalPut(d)
 
-	w.Begin()
+	WalBegin()
 	var ret int
 	var dp *kvs.KVData
 	for {
-		dp, ret = w.Read()
+		dp, ret = WalRead()
 		if ret == 0 {
 			break
 		}
