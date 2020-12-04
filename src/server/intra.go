@@ -5,7 +5,6 @@ import (
 	"gen-go/kvs"
 	"log"
 	"net"
-	"os"
 	"strconv"
 	"thrift/lib/go/thrift"
 )
