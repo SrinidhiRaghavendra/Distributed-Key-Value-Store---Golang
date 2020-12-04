@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"thrift/lib/go/thrift"
-	"kvs"
+	"gen-go/kvs"
 )
 
 var _ = kvs.GoUnusedProtection__

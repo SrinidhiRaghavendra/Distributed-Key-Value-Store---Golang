@@ -4,22 +4,39 @@ import (
 	"fmt"
 	"gen-go/kvs"
 	"thrift/lib/go/thrift"
+	"os"
+	"server"
+	"strconv"
 )
+
+func initManagers() {
+	//Init Replica
+	nodeID, _ := strconv.Atoi(os.Args[2])
+	server.InitNodeInfo(os.Args[1], int32(nodeID))
+	//Init Memstore
+	server.MemstoreInit()
+	//Init Hint manager
+	server.HintInit()
+	//Init WAL
+	server.WalInit()
+}
 
 func runServer(transportFactory thrift.TTransportFactory, protocolFactory thrift.TProtocolFactory) error {
 	var transport thrift.TServerTransport
 	var err error
 
-	transport, err = thrift.NewTServerSocket("0.0.0.0")
+	initManagers()
+	transport, err = thrift.NewTServerSocket(server.MeListenAddr)
 
 	if err != nil {
 		return err
 	}
 	fmt.Printf("%T\n", transport)
-	handler := NewKVSHandler()
+	handler := server.NewKVSHandler()
 	processor := kvs.NewReplicaProcessor(handler)
 	serverp := thrift.NewTSimpleServer4(processor, transport, transportFactory, protocolFactory)
 	fmt.Println("Starting the simple server... on ")
+	go server.Recover()
 	return serverp.Serve()
 }
 

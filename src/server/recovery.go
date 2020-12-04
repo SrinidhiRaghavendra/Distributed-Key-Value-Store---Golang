@@ -6,8 +6,16 @@ import (
 	"log"
 )
 
-func recover() {
-	var rec []*kvs.KVData
+func Recover() {
+	WalBegin()
+	for {
+		v, s := WalRead()
+		if s == 0 {
+			break
+		}
+		MemstorePut(v)
+	}
+
 	nodes := GetEveryone()
 	for i, v := range nodes {
 		if i != int(me) {
@@ -17,21 +25,11 @@ func recover() {
 			if err != nil {
 				log.Printf("Recovery warning: Error fetching hints from %v (%v)\n", v.ID, err)
 			} else {
-				rec = append(rec, h...)
+				for _, data := range h {
+					WalPut(*data)
+					MemstorePut(data)
+				}
 			}
 		}
-	}
-
-	WalBegin()
-	for {
-		v, s := WalRead()
-		if s == 0 {
-			break
-		}
-		rec = append(rec, v)
-	}
-
-	for _, v := range rec {
-		MemstorePut(v)
 	}
 }

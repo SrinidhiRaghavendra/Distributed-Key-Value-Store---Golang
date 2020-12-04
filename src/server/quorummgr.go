@@ -2,7 +2,7 @@ package server
 
 import (
 	"gen-go/kvs"
-	"container/list"
+	"context"
 )
 
 type QuorumMgr struct {
@@ -17,38 +17,36 @@ func NewQuorumMgr() *QuorumMgr {
 TODO: Implement Two/Three Phase commit later
 */
 func (q *QuorumMgr) Put(c context.Context, replicaSet []*kvs.Node, data *kvs.KVData, cLevel kvs.ConsistencyLevel) *kvs.SystemException {
-	var failedNodes List = list.New()
 	var successCount int
-	var intraNodeComms [len(replicaSet)]IntraNodeComm
-	for index, node := range replicaSet {
+	var intraNodeComms []*IntraNodeComm
+	for _, node := range replicaSet {
 		nodeComms := NewIntraNodeComm(node)
 		err := nodeComms.Setuprep()
 		if(err == nil) {
 			successCount += 1
 		}
-		intraNodeComms[index] = nodeComms
+		intraNodeComms = append(intraNodeComms, nodeComms)
 	}
-	if(successCount >= cLevel) {
-		for index, nodeComms := range intraNodeComms {
+	if(successCount >= int(cLevel)) {
+		for _, nodeComms := range intraNodeComms {
 			err := nodeComms.PutDataInNode(c, data)
 			if(err != nil) {
 				//Store hint for this failed node 
-				StoreHint(node.GetID(), data)
+				StoreHint(nodeComms.n.ID, *data)
 			}
 		}
 		return nil
 	} else {
 		execption := kvs.NewSystemException()
-		execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		*execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
 		return execption
 	}
 }
 
-func (q *QuorumMgr) Get(c context.Context, replicaSet []*kvs.Node, int32 key, cLevel kvs.ConsistencyLevel) (string, *kvs.SystemException) {
+func (q *QuorumMgr) Get(c context.Context, replicaSet []*kvs.Node, key int32, cLevel kvs.ConsistencyLevel) (string, *kvs.SystemException) {
 	var latestData kvs.KVData 
 	var latestCount int
-	successCount := 0
-	for index, node := range replicaSet {
+	for _, node := range replicaSet {
 		nodeComms := NewIntraNodeComm(node)
 		kvData, err := nodeComms.GetDataFromNode(c, key)
 		if(err != nil) {
@@ -56,17 +54,17 @@ func (q *QuorumMgr) Get(c context.Context, replicaSet []*kvs.Node, int32 key, cL
 				latestCount += 1
 				continue
 			}
-			if(latestData.TimeStamp < kvData.TimeStamp) {
+			if(latestData.Timestamp < kvData.Timestamp) {
 				latestData = *kvData
 				latestCount = 1
 			}
 		}
 	}
-	if(latestCount >= cLevel) {
-		return (latestData.Value, nil)
+	if(latestCount >= int(cLevel)) {
+		return latestData.Value, nil
 	} else {
 		execption := kvs.NewSystemException()
-		execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
-		return (nil, execption)
+		*execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		return "", execption
 	}
 }

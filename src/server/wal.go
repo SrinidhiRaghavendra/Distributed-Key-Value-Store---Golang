@@ -19,7 +19,7 @@ var w *wal
 
 func WalInit() {
 	w = &wo
-	f, err := os.Create("./wal-" + strconv.Itoa(int(me)))
+	f, err := os.OpenFile("./wal-" + strconv.Itoa(int(me)), os.O_CREATE, 0644)
 	if err != nil {
 		log.Fatal("WAL init failed", err)
 	}

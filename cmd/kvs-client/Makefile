@@ -1,5 +1,5 @@
 
-EXE = ../../bin/kvs-server
+EXE = ../../bin/kvs-client
 
 $(EXE):
 	go build -o $(EXE)

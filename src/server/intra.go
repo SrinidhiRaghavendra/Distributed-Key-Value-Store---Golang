@@ -20,9 +20,9 @@ func NewIntraNodeComm(node *kvs.Node) *IntraNodeComm {
 	return &IntraNodeComm{n: node}
 }
 
-func (h *IntraNodeComm) Setuprep() err error {
+func (h *IntraNodeComm) Setuprep() (err error) {
 	if(me != h.n.ID) {
-		if(h.trans.IsOpen()){
+		if(h.trans != nil && h.trans.IsOpen()){
 			return
 		}
 		var err error
@@ -40,6 +40,7 @@ func (h *IntraNodeComm) Setuprep() err error {
 	} else {
 		h.rep = NewKVSHandler()
 	}
+	return
 }
 
 func (h *IntraNodeComm) closerep() {
@@ -56,17 +57,17 @@ func (h *IntraNodeComm) Put(c context.Context, key int32, value string, cLevel k
 }
 
 func (h *IntraNodeComm) GetDataFromNode(c context.Context, key int32) (r *kvs.KVData, err error) {
-	err = h.setuprep()
-	if(err == nil) {
-		return (nil, err)
+	err = h.Setuprep()
+	if(err != nil) {
+		return nil, err
 	}
 	defer h.closerep()
 	r, err = h.rep.GetDataFromNode(c, key)
 	return
 }
 func (h *IntraNodeComm) PutDataInNode(c context.Context, data *kvs.KVData) (err error) {
-	err = h.setuprep()
-	if(err == nil) {
+	err = h.Setuprep()
+	if(err != nil) {
 		return err
 	}
 	defer h.closerep()
@@ -74,9 +75,9 @@ func (h *IntraNodeComm) PutDataInNode(c context.Context, data *kvs.KVData) (err 
 	return
 }
 func (h *IntraNodeComm) GetHints(c context.Context, node *kvs.Node) (r []*kvs.KVData, err error) {
-	err = h.setuprep()
-	if(err == nil) {
-		return nil
+	err = h.Setuprep()
+	if(err != nil) {
+		return nil, err
 	}
 	defer h.closerep()
 	r, err = h.rep.GetHints(c, node)
