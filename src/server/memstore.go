@@ -2,8 +2,6 @@ package server
 
 import (
 	"gen-go/kvs"
-	"log"
-	"time"
 )
 
 type memstore struct {
@@ -18,15 +16,8 @@ func MemstoreInit() {
 
 func MemstorePut(d *kvs.KVData) {
 	if val, ok := m.store[d.Key]; ok {
-		oldts, err := time.Parse(time.UnixDate, val.Timestamp)
-		if err != nil {
-			log.Printf("Error parsing timestamp %v", val)
-		}
-		newts, derr := time.Parse(time.UnixDate, d.Timestamp)
-		if derr != nil {
-			log.Printf("Error parsing timestamp %v", d.Timestamp)
-		}
-		if !oldts.After(newts) {
+
+	if val.Timestamp <= d.Timestamp {
 			m.store[d.Key] = *d
 		}
 	} else {

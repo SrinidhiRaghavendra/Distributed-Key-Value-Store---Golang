@@ -4,7 +4,7 @@ exception SystemException {
 
 struct KVData {
   1: string value;
-  2: string timestamp;
+  2: i64 timestamp;
   3: i32 key;
 }
 
