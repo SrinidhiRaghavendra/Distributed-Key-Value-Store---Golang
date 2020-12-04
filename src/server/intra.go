@@ -29,7 +29,6 @@ func (h *IntraNodeComm) Setuprep() (err error) {
 		h.trans, err = thrift.NewTSocket(net.JoinHostPort(h.n.IP, strconv.Itoa(int(h.n.Port))))
 		if err != nil {
 			log.Printf("failed to create socket to %v:%v [%v]", h.n.IP, h.n.Port, err)
-			os.Exit(1)
 		}
 		protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 		h.rep = kvs.NewReplicaClientFactory(h.trans, protocolFactory)
