@@ -14,7 +14,7 @@ func HintInit() {
 	var err error
 	for i, _ := range hints {
 		if i != int(me) {
-			hints[i], err = os.OpenFile("hints-" + strconv.Itoa(int(me)) + ":" + strconv.Itoa(int(i)), os.O_CREATE, 0644)
+			hints[i], err = os.OpenFile("hints-" + strconv.Itoa(int(me)) + ":" + strconv.Itoa(int(i)), os.O_CREATE|os.O_RDWR, 0644)
 			if err != nil {
 				log.Printf("error creating hint file %v", "hints-"+strconv.Itoa(int(me))+":"+strconv.Itoa(int(i)))
 			}

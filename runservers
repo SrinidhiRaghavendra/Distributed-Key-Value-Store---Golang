@@ -1,0 +1,6 @@
+#!/bin/bash
+
+./bin/kvs-server config.txt 0 &
+./bin/kvs-server config.txt 1 &
+./bin/kvs-server config.txt 2 &
+./bin/kvs-server config.txt 3 &

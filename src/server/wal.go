@@ -19,7 +19,7 @@ var w *wal
 
 func WalInit() {
 	w = &wo
-	f, err := os.OpenFile("./wal-" + strconv.Itoa(int(me)), os.O_CREATE, 0644)
+	f, err := os.OpenFile("./wal-" + strconv.Itoa(int(me)), os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		log.Fatal("WAL init failed", err)
 	}
@@ -55,7 +55,8 @@ func WalPut(d *kvs.KVData) {
 	str := MarshalKVData(d)
 	n, err := w.f.WriteString(str)
 	if err != nil {
-		log.Fatal("WAL write failed\n")
+		log.Print("WAL write failed\n")
+		log.Print(err)
 	}
 	_ = n
 	w.f.Sync()

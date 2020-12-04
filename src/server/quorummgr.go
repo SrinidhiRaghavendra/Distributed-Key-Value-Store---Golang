@@ -37,8 +37,8 @@ func (q *QuorumMgr) Put(c context.Context, replicaSet []*kvs.Node, data *kvs.KVD
 		}
 		return nil
 	} else {
-		execption := kvs.NewSystemException()
-		*execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		message :="Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		execption := &kvs.SystemException{Message: &message}
 		return execption
 	}
 }
@@ -63,8 +63,8 @@ func (q *QuorumMgr) Get(c context.Context, replicaSet []*kvs.Node, key int32, cL
 	if(latestCount >= int(cLevel)) {
 		return latestData.Value, nil
 	} else {
-		execption := kvs.NewSystemException()
-		*execption.Message = "Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		message :="Consistency Level required is not met. Hence th eoperation is a failure. Please try again!"
+		execption := &kvs.SystemException{Message: &message}
 		return "", execption
 	}
 }
