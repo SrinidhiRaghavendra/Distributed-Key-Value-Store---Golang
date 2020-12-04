@@ -12,11 +12,11 @@ func TestWal(t *testing.T) {
 	defer WalClose()
 	WalInit()
 	d := kvs.KVData{Key: 1, Value: "one", Timestamp: time.Now().Unix()}
-	WalPut(d)
+	WalPut(&d)
 	d = kvs.KVData{Key: 2, Value: "two", Timestamp: time.Now().Unix()}
-	WalPut(d)
+	WalPut(&d)
 	d = kvs.KVData{Key: 3, Value: "three", Timestamp: time.Now().Unix()}
-	WalPut(d)
+	WalPut(&d)
 
 	WalBegin()
 	var ret int

@@ -26,7 +26,7 @@ func Recover() {
 				log.Printf("Recovery warning: Error fetching hints from %v (%v)\n", v.ID, err)
 			} else {
 				for _, data := range h {
-					WalPut(*data)
+					WalPut(data)
 					MemstorePut(data)
 				}
 			}

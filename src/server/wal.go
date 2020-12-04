@@ -51,8 +51,8 @@ func WalRead() (*kvs.KVData, int) {
 	return d, status
 }
 
-func WalPut(d kvs.KVData) {
-	str := MarshalKVData(&d)
+func WalPut(d *kvs.KVData) {
+	str := MarshalKVData(d)
 	n, err := w.f.WriteString(str)
 	if err != nil {
 		log.Fatal("WAL write failed\n")

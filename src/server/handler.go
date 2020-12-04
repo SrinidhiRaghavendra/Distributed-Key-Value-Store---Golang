@@ -4,6 +4,7 @@ import (
 	"gen-go/kvs"
 	"context"
 	"errors"
+	"time"
 )
 
 type KVSHandler struct {
@@ -25,16 +26,25 @@ func (h *KVSHandler) Get(c context.Context, key int32, cLevel kvs.ConsistencyLev
 	r, err = quorumMgr.Get(context.Background(), replicaSet, key, cLevel)
 	return
 }
-func (h *KVSHandler) Put(c context.Context,key int32, value string, cLevel kvs.ConsistencyLevel) (err error) {
-	return nil
+func (h *KVSHandler) Put(c context.Context, key int32, value string, cLevel kvs.ConsistencyLevel) (err error) {
+	if(key < 0 || key > 255) {
+		return errors.New("Range of key is only [0,255]")
+	}
+	replicaSet := GetReplicasForKey(uint8(key))
+	quorumMgr := NewQuorumMgr()
+	err = quorumMgr.Put(context.Background(), replicaSet, &kvs.KVData{Key: key, Value: value, Timestamp: time.Now().Unix()}, cLevel)
+	return err
 }
 func (h *KVSHandler) GetDataFromNode(c context.Context,key int32) (r *kvs.KVData, err error) {
 	data, _ := MemstoreGet(key)
 	return data, nil
 }
 func (h *KVSHandler) PutDataInNode(c context.Context,data *kvs.KVData) (err error) {
+	WalPut(data)
+	MemstorePut(data)
 	return
 }
 func (h *KVSHandler) GetHints(c context.Context,node *kvs.Node) (r []*kvs.KVData, err error) {
+	r = GetHintsForNode(node.ID)
 	return
 }
