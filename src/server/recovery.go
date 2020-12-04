@@ -15,7 +15,7 @@ func recover() {
 			var ctx context.Context
 			h, err := com.GetHints(ctx, &kvs.Node{ID: me})
 			if err != nil {
-				log.Fatalf("Recovery warning: Error fetching hints from %v (%v)\n", v.ID, err)
+				log.Printf("Recovery warning: Error fetching hints from %v (%v)\n", v.ID, err)
 			} else {
 				rec = append(rec, h...)
 			}

@@ -20,11 +20,11 @@ func MemstorePut(d *kvs.KVData) {
 	if val, ok := m.store[d.Key]; ok {
 		oldts, err := time.Parse(time.UnixDate, val.Timestamp)
 		if err != nil {
-			log.Fatalf("Error parsing timestamp %v", val)
+			log.Printf("Error parsing timestamp %v", val)
 		}
 		newts, derr := time.Parse(time.UnixDate, d.Timestamp)
 		if derr != nil {
-			log.Fatalf("Error parsing timestamp %v", d.Timestamp)
+			log.Printf("Error parsing timestamp %v", d.Timestamp)
 		}
 		if !oldts.After(newts) {
 			m.store[d.Key] = *d
