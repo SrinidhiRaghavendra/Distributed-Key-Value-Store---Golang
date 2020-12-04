@@ -2,7 +2,7 @@
 EXE = ../../bin/kvs-server
 
 $(EXE):
-	go build -o $(EXE)
+	go build -gcflags "-N" -o $(EXE)
 
 clean:
 	go clean

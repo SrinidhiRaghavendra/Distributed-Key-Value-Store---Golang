@@ -16,7 +16,7 @@ var MeListenAddr string
 // TODO init me
 
 func next(start uint) uint {
-	return (start + 1) % 3
+	return (start + 1) % uint(len(nodes))
 }
 
 func GetReplicasForKey(key uint8) []*kvs.Node {
@@ -33,7 +33,7 @@ func ReadConfig(configFile string, nodes *[4]kvs.Node) {
 	file, err := os.Open(configFile)
 	defer file.Close()
 	if err != nil {
-		log.Fatalf("Failed to open config file")
+		log.Fatalf("Failed to open config file %v\n", configFile)
 	}
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)

@@ -1,14 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"context"
-	"flag"
 	"fmt"
 	"gen-go/kvs"
-	"math/rand"
-	"net"
 	"os"
-	"server"
 	"strconv"
 	"thrift/lib/go/thrift"
 )
@@ -18,7 +15,7 @@ var _ = kvs.GoUnusedProtection__
 var myserver *kvs.Node
 
 func Usage() {
-	fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " [config file]")
+	fmt.Fprintln(os.Stderr, "Usage of ", os.Args[0], " ip:port")
 	fmt.Fprintln(os.Stderr)
 	os.Exit(0)
 }
@@ -28,21 +25,15 @@ var cmdusage string = "Bad format" +
 	"put\n [key[0-255]] [value] [consistency level[ONE|QUORUM]"
 
 func main() {
-	flag.Usage = Usage
 	var host string
-	var port int32
-	var config string
 	var trans thrift.TTransport
-	flag.Usage = Usage
-	flag.StringVar(&config, "c", "kvs.config", "Spcify the config file")
-	var nodes [4]kvs.Node
-	server.ReadConfig(config, &nodes)
-	myserver = &nodes[rand.Intn(3)]
-	host = myserver.IP
-	port = myserver.Port
-	portStr := strconv.Itoa(int(port))
 	var err error
-	trans, err = thrift.NewTSocket(net.JoinHostPort(host, portStr))
+	if len(os.Args) != 2 {
+		Usage()
+		os.Exit(1)
+	}
+	host = os.Args[1]
+	trans, err = thrift.NewTSocket(host)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error resolving address:", err)
 		os.Exit(1)
@@ -53,7 +44,7 @@ func main() {
 	oprot := protocolFactory.GetProtocol(trans)
 	client := kvs.NewReplicaClient(thrift.NewTStandardClient(iprot, oprot))
 	if err := trans.Open(); err != nil {
-		fmt.Fprintln(os.Stderr, "Error opening socket to ", host, ":", port, " ", err)
+		fmt.Fprintln(os.Stderr, "Error opening socket to ", host, err)
 		os.Exit(1)
 	}
 	fcons := func(s *string) kvs.ConsistencyLevel {
@@ -73,11 +64,11 @@ func main() {
 		var arg4 string
 		var argn int
 		fmt.Printf("kvs-shell $ ")
-		argn, err := fmt.Scan(arg1, arg2, arg3, arg4)
-		if err != nil {
-			fmt.Println(cmdusage)
-		}
-
+		input := bufio.NewScanner(os.Stdin)
+		input.Scan()
+		line := input.Text()
+		argn, err := fmt.Sscanf(line, "%s %s %s %s", &arg1, &arg2, &arg3, &arg4)
+		_ = err
 		switch arg1 {
 		case "get":
 			if argn != 3 {
@@ -94,7 +85,9 @@ func main() {
 				fmt.Println(cmdusage)
 				break
 			}
-			fmt.Print(client.Get(context.Background(), int32(intarg1), intarg2))
+			s, er := client.Get(context.Background(), int32(intarg1), intarg2)
+			fmt.Printf(">> %v", s)
+			_ = er
 		case "put":
 			if argn != 4 {
 				fmt.Println(cmdusage)
@@ -106,8 +99,12 @@ func main() {
 				break
 			}
 			intarg2 := fcons(&arg4)
-			fmt.Print(client.Put(context.Background(), int32(intarg1), arg3, intarg2))
-			fmt.Print("\n")
+			err3 := client.Put(context.Background(), int32(intarg1), arg3, intarg2)
+			if err3 != nil {
+				fmt.Println("Put failed due to ", err3)
+			}
+		case "exit":
+			os.Exit(0)
 		default:
 		}
 		fmt.Print("\n")
