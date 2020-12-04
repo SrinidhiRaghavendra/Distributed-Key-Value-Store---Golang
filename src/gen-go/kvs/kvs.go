@@ -24,12 +24,14 @@ type ConsistencyLevel int64
 const (
   ConsistencyLevel_ONE ConsistencyLevel = 0
   ConsistencyLevel_QUORUM ConsistencyLevel = 1
+  ConsistencyLevel_INVALID ConsistencyLevel = 2
 )
 
 func (p ConsistencyLevel) String() string {
   switch p {
   case ConsistencyLevel_ONE: return "ONE"
   case ConsistencyLevel_QUORUM: return "QUORUM"
+  case ConsistencyLevel_INVALID: return "INVALID"
   }
   return "<UNSET>"
 }
@@ -38,6 +40,7 @@ func ConsistencyLevelFromString(s string) (ConsistencyLevel, error) {
   switch s {
   case "ONE": return ConsistencyLevel_ONE, nil 
   case "QUORUM": return ConsistencyLevel_QUORUM, nil 
+  case "INVALID": return ConsistencyLevel_INVALID, nil 
   }
   return ConsistencyLevel(0), fmt.Errorf("not a valid ConsistencyLevel string")
 }

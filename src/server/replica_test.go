@@ -13,7 +13,7 @@ func testReplicaCorrect(ni []*kvs.Node, ids []int32, t *testing.T) {
 	}
 }
 func TestReplica(t *testing.T) {
-	InitNodeInfo(0)
+	InitNodeInfo("test.config", 0) // broken
 	rep := GetReplicasForKey(255)
 	exp := []int32{3, 1, 2}
 	testReplicaCorrect(rep, exp, t)

@@ -1,17 +1,18 @@
 package server
 
 import (
+	"bufio"
 	"gen-go/kvs"
 	"log"
 	"os"
-	"bufio"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 var nodes [4]kvs.Node
 var me int32
 var MeListenAddr string
+
 // TODO init me
 
 func next(start uint) uint {
@@ -28,26 +29,28 @@ func GetEveryone() []kvs.Node {
 	return nodes[:]
 }
 
-func InitNodeInfo(configFile string, m int32) {
+func ReadConfig(configFile string, nodes *[4]kvs.Node) {
 	file, err := os.Open(configFile)
+	defer file.Close()
 	if err != nil {
 		log.Fatalf("Failed to open config file")
 	}
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-	var index int32 = 0
-	//NOTE: The config file is assumed to be in correct format, can add validations later
+
+	index := int32(0)
 	for scanner.Scan() {
 		text := scanner.Text()
 		parts := strings.Split(text, ",")
-		port,_ := strconv.ParseInt(parts[1], 10, 32)
-		nodes[index] = kvs.Node{ID: index, IP: parts[0], Port: int32(port)}
-		if(index == m) {
-			MeListenAddr = parts[0]+":"+parts[1]
-		}
+		port, _ := strconv.ParseInt(parts[1], 10, 32)
+		(*nodes)[index] = kvs.Node{ID: index, IP: parts[0], Port: int32(port)}
 		index += 1
-
 	}
-	file.Close()
+	return
+}
+
+func InitNodeInfo(configFile string, m int32) {
+	ReadConfig(configFile, &nodes)
+	MeListenAddr = nodes[m].IP + ":" + strconv.Itoa(int(nodes[m].Port))
 	me = m
 }

@@ -16,7 +16,8 @@ struct Node {
 
 enum ConsistencyLevel {
   ONE,
-  QUORUM
+  QUORUM,
+  INVALID
 }
 
 service Replica {
