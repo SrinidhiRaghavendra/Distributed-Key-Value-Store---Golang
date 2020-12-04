@@ -16,7 +16,8 @@ func MemstoreInit() {
 
 func MemstorePut(d *kvs.KVData) {
 	if val, ok := m.store[d.Key]; ok {
-		if val.Timestamp <= d.Timestamp {
+
+	if val.Timestamp <= d.Timestamp {
 			m.store[d.Key] = *d
 		}
 	} else {
