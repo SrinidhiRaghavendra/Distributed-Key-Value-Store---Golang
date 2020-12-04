@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 )
 
 type wal struct {
@@ -16,10 +17,11 @@ type wal struct {
 
 var wo wal
 var w *wal
+var walmtx sync.Mutex
 
 func WalInit() {
 	w = &wo
-	f, err := os.OpenFile("./wal-" + strconv.Itoa(int(me)), os.O_CREATE|os.O_RDWR, 0644)
+	f, err := os.OpenFile("./wal-"+strconv.Itoa(int(me)), os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		log.Fatal("WAL init failed", err)
 	}
@@ -53,6 +55,8 @@ func WalRead() (*kvs.KVData, int) {
 
 func WalPut(d *kvs.KVData) {
 	str := MarshalKVData(d)
+	walmtx.Lock()
+	defer walmtx.Unlock()
 	n, err := w.f.WriteString(str)
 	if err != nil {
 		log.Print("WAL write failed\n")
