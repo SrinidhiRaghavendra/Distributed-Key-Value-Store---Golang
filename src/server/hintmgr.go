@@ -42,10 +42,16 @@ func StoreHint(id int32, hint kvs.KVData) {
 }
 
 func GetHintsForNode(id int32) []*kvs.KVData {
-	scan := bufio.NewScanner(hints[id])
+	f, err := os.Open("hints-" + strconv.Itoa(int(me)) + ":" + strconv.Itoa(int(id)))
+	if err != nil {
+		log.Printf("error opening hint file %v", "hints-"+strconv.Itoa(int(me))+":"+strconv.Itoa(int(id)))
+	}
+	scan := bufio.NewScanner(f)
+	scan.Split(bufio.ScanLines)
 	var d []*kvs.KVData
 	for scan.Scan() {
-		d = append(d, UnMarshalKVData(scan.Text()))
+		x := UnMarshalKVData(scan.Text())
+		d = append(d, x)
 	}
 	return d
 }

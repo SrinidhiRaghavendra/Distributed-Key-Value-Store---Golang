@@ -86,7 +86,11 @@ func main() {
 				break
 			}
 			s, er := client.Get(context.Background(), int32(intarg1), intarg2)
-			fmt.Printf(">> %v", s)
+			if er != nil {
+				fmt.Println("Put consistency level not met.")
+			} else {
+				fmt.Printf(">> %v", s)
+			}
 			_ = er
 		case "put":
 			if argn != 4 {
@@ -101,7 +105,9 @@ func main() {
 			intarg2 := fcons(&arg4)
 			err3 := client.Put(context.Background(), int32(intarg1), arg3, intarg2)
 			if err3 != nil {
-				fmt.Println("Put failed due to ", err3)
+				fmt.Println("Put consistency level not met.")
+			} else {
+				fmt.Println("Put successfully done.")
 			}
 		case "exit":
 			os.Exit(0)

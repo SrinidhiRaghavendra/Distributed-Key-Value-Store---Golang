@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"gen-go/kvs"
-	"thrift/lib/go/thrift"
 	"os"
 	"server"
 	"strconv"
+	"thrift/lib/go/thrift"
 )
 
 func initManagers() {

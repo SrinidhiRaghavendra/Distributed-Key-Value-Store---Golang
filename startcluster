@@ -1,6 +1,11 @@
 #!/bin/bash
-
-./bin/kvs-server config.txt 0 &
-./bin/kvs-server config.txt 1 &
-./bin/kvs-server config.txt 2 &
-./bin/kvs-server config.txt 3 &
+killall kvs-server
+./removestores
+./bin/kvs-server config.txt 0 >/dev/null 2>&1 &
+sleep 1
+./bin/kvs-server config.txt 1 >/dev/null 2>&1 &
+sleep 1
+./bin/kvs-server config.txt 2 >/dev/null 2>&1 &
+sleep 1
+./bin/kvs-server config.txt 3 >/dev/null 2>&1 &
+echo "Cluster is up !!"

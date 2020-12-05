@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"gen-go/kvs"
-	"log"
 )
 
 func Recover() {
@@ -23,7 +22,6 @@ func Recover() {
 			var ctx context.Context
 			h, err := com.GetHints(ctx, &kvs.Node{ID: me})
 			if err != nil {
-				log.Printf("Recovery warning: Error fetching hints from %v (%v)\n", v.ID, err)
 			} else {
 				for _, data := range h {
 					WalPut(data)

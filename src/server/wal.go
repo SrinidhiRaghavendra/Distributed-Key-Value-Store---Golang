@@ -21,7 +21,7 @@ var walmtx sync.Mutex
 
 func WalInit() {
 	w = &wo
-	f, err := os.OpenFile("./wal-"+strconv.Itoa(int(me)), os.O_CREATE|os.O_RDWR, 0644)
+	f, err := os.OpenFile("./wal-"+strconv.Itoa(int(me)), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal("WAL init failed", err)
 	}
@@ -62,6 +62,8 @@ func WalPut(d *kvs.KVData) {
 		log.Print("WAL write failed\n")
 		log.Print(err)
 	}
+	log.Printf("Walput finished for %v\n", str)
+
 	_ = n
 	w.f.Sync()
 }
