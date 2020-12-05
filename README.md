@@ -1,17 +1,35 @@
 # ds-assignment3
 
-NOTE: 
-1. There is no validation for correct format of the config file.
-2. There is no validation for the number of command line arguments and the correctness.
+## build
 
-For reference:
-1. Format of the config file:
-<IP>,<port>
-.
-.
-.
+./configure.remote
+make
 
-Eg: refer config.txt
+## run cluster
+./startcluster
 
-2. Usage:
-./bin/kvs-server config.txt <nodeID - [0-3]> &
+## start node
+./bin/kvs-server config.txt [nodeid [0-3]]] &
+
+## start client
+./bin/kvs-client [ip:port]
+
+## distribution of tasks
+
+###Rohit:
+-build system
+-hint manager
+-WAL
+-intra cluster communication
+-memory store
+-client
+
+###Srinidhi:
+-quorum manager
+-co-ordinator
+-thrift file
+-replica
+-recovery
+
+## completion status
+complete
