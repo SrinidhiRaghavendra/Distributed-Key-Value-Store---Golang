@@ -1,0 +1,55 @@
+#!/bin/bash
+set -o -xtrace
+#Test a single servere on another host later
+
+#Start all replicas
+./startcluster
+
+#should succeed
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9991 put 73 aaaa 1 
+
+#should return aaaa
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 get 73 1
+
+#should succeed 
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 put 73 bbbb 1
+
+#kill all and restart S2
+./killservers
+./bin/kvs-server config.txt 1
+
+#should return bbbb 
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 get 73 1 
+
+#should fail
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 put 137 ssss 1 
+
+#should fail because quorum cannot be achieved
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 get 73 2
+
+#restart S3
+./bin/kvs-server config.txt 2
+
+#previous call should succeed now
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 get 73 2
+
+#Start S1, S4 and stop S2
+./bin/kvs-server config.txt 0
+./bin/kvs-server config.txt 3
+kill -9 $(lsof -t -i:9992)
+
+#should be successfull storing a hint for S2 at S1 
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9991 put 73 cccc 2
+
+#restart S2
+./bin/kvs-server config.txt 1
+
+#Store K3 = 243, Value = dddd 
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9992 put 243 dddd 1 
+
+#Stop S3 and S4
+kill -9 $(lsof -t -i:9993)
+kill -9 $(lsof -t -i:9994)
+
+#Ask S1 for K1 with cLevel 1
+go run ./src/gen-go/kvs/replica-remote/replica-remote.go -h 127.0.0.1:9991 get 73 1

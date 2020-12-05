@@ -1,0 +1,36 @@
+Steps:
+1. Start all replicas, atleast one of them in a different host.
+2. K1 - 73(S2,S3,S4), K2 - 137(S3,S4,S1), K3 - 243(S4,S1,S2)
+3. Values can be anything
+4. Initially all four replicas are empty.
+5. 6 clients
+
+C1 - S1 (ONE, put, K1) - all replicas up.
+C2 - S2 (ONE, get, K1) - should be same as K1 that was put by C1, (ONE,put, K1) - new value for K1
+
+Stop all replicas
+./killservers
+
+Restart only S2
+
+C3 - S2 (ONE, get, K1) - should show the second value of K1, recovery manager. (ONE, put, K2) - should throw execption saying quorum cannot be met, quorum manager.
+C3 - S2 (QUORUM, get, K1) - shoud throw exception as quorum cannot be met.
+
+Resrart S3
+
+C3 - S2 (QUORUM, get, K1) - should return the second value of K1
+
+Resrart S1 and S4, Stop S2
+
+C4 - S1 (QUORUM, put, K1) - S1 should store a hint for S2, call should be successful as S3 and S4 are up.
+
+Restart S2. Actually no need for this call at all.
+
+C5 - S2 (ONE, put ,K3)
+
+Stop S3, S4
+
+C6 - S1 (ONE, get, K1) - should return the third value after recover and getting the updated value as a hint.
+
+
+
